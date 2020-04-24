@@ -66,31 +66,32 @@ function installPlank {
 function installIosevka {
   mkdir -p $HOME/.fonts
   cp -r .fonts/Iosevka ~/.fonts/
-  xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Iosevka 12"
+  xfconf-query -c xsettings -p /Gtk/MonospaceFontName -n -t string -s "Iosevka 12"
 }
 
 function useUbuntuMono {
-  xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Ubuntu Mono 12"
+  xfconf-query -c xsettings -p /Gtk/MonospaceFontName -n -t string -s "Ubuntu Mono 12"
 }
 
 function installFonts {
-  echo "Do you wish to use Iosevka as your monospace font?"
-  select yn in "Yes" "No"; do
+  echo "Which monospace font you wish to use?"
+  select yn in "Default" "Ubuntu" "Iosevka"; do
     case $yn in
-      Yes ) echo "Installing Iosevka..."; installIosevka; break;;
-      No ) useUbuntuMono; break;;
+      Default ) break;;
+      Ubuntu ) echo "Enabling Ubuntu Mono..."; useUbuntuMono; break;;
+      Iosevka ) echo "Installing Iosevka..."; installIosevka; break;;
     esac
   done
 
   mkdir -p $HOME/.fonts
   cp -r .fonts/Lucida\ Grande ~/.fonts/
-  xfconf-query -c xfwm4 -p /general/title_font -s "Lucida Grande Bold 9"
-  xfconf-query -c xsettings -p /Gtk/FontName -s "Lucida Grande 9"
+  xfconf-query -c xfwm4 -p /general/title_font -n -t string -s "Lucida Grande Bold 9"
+  xfconf-query -c xsettings -p /Gtk/FontName -n -t string -s "Lucida Grande 9"
 
   echo "Do you wish to enable the BGR subpixel font rendering? Answer 'No' if not sure."
   select yn in "Yes" "No"; do
     case $yn in
-      Yes ) echo "Enabling BGR font rendering..."; xfconf-query -c xsettings -p /Xft/RGBA -s "bgr"; break;;
+      Yes ) echo "Enabling BGR font rendering..."; xfconf-query -c xsettings -p /Xft/RGBA -n -t string -s "bgr"; break;;
       No ) break;;
     esac
   done
@@ -104,14 +105,14 @@ function installGtkTweaks {
 function installXfwmTheme {
   mkdir -p $HOME/.themes
   cp -r .themes/Goodbird ~/.themes/
-  xfconf-query -c xfwm4 -p /general/theme -s "Goodbird"
+  xfconf-query -c xfwm4 -p /general/theme -n -t string -s "Goodbird"
 }
 
 function configureKeyboardLayout {
-  xfconf-query -c keyboard-layout -p /Default/XkbDisable -s false
-  xfconf-query -c keyboard-layout -p /Default/XkbLayout -s "us,ru"
-  xfconf-query -c keyboard-layout -p /Default/XkbOptions/Group -s "grp:alt_shift_toggle"
-  xfconf-query -c keyboard-layout -p /Default/XkbVariant -s "colemak,"
+  xfconf-query -c keyboard-layout -p /Default/XkbDisable -n -t bool -s false
+  xfconf-query -c keyboard-layout -p /Default/XkbLayout -n -t string -s "us,ru"
+  xfconf-query -c keyboard-layout -p /Default/XkbOptions/Group -n -t string -s "grp:alt_shift_toggle"
+  xfconf-query -c keyboard-layout -p /Default/XkbVariant -n -t string -s "colemak,"
 }
 
 function configureRistretto {
@@ -221,8 +222,8 @@ function configureXfwm {
 }
 
 function configureXsettings {
-  xfconf-query -c xsettings -p /Net/ThemeName -s "Greybird"
-  xfconf-query -c xsettings -p /Net/IconThemeName -s "elementary-xfce-darker"
+  xfconf-query -c xsettings -p /Net/ThemeName -n -t string -s "Greybird"
+  xfconf-query -c xsettings -p /Net/IconThemeName -n -t string -s "elementary-xfce-darker"
 }
 
 sudo apt update
@@ -235,17 +236,50 @@ select yn in "Yes" "No"; do
   esac
 done
 
+echo "Installing & configuring Plank..."
 installPlank
+
+echo "Setting up the fonts..."
 installFonts
+
+echo "Installing GTK 3 tweaks..."
 installGtkTweaks
+
+echo "Installing XFWM theme..."
 installXfwmTheme
 
-configureKeyboardLayout
+echo "Do you wish to enable the Colemak and Russian keyboard layouts?"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) echo "Configuring keyboard layouts..."; configureKeyboardLayout; break;;
+    No ) break;;
+  esac
+done
+
+echo "Configuring Ristretto..."
 configureRistretto
+
+echo "Configuring Thunar..."
 configureThunar
+
+echo "Configuring Terminal..."
 configureTerminal
+
+echo "Configuring Mousepad..."
 configureMousepad
+
+echo "Configuring Desktop..."
 configureDesktop
+
+echo "Configuring Panel..."
 configurePanel
+
+echo "Configuring XFWM..."
 configureXfwm
+
+echo "Applying X Settings..."
 configureXsettings
+
+echo "Done."
+echo "---"
+echo "It's better to reboot now."
