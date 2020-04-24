@@ -54,8 +54,6 @@ function installPlank {
       sudo apt install plank -y
       mkdir -p $HOME/.config/autostart/
       cp .config/autostart/Plank.desktop $HOME/.config/autostart/
-      touch $HOME/.config/autostart/plank.desktop
-      mkdir -p $HOME/.config/plank/dock1/launchers/
       configurePlank
       plank &>/dev/null &
   else
