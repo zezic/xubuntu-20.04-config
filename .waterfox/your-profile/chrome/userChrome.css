@@ -1,0 +1,6 @@
+#toolbar-menubar {
+  position: absolute;
+}
+.titlebar-buttonbox-container {
+  transform: translateY(-12px);
+}
