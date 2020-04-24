@@ -1,5 +1,7 @@
 # zezic's Configuration for Xubuntu 20.04
 
+![Screenshot](/screenshot.png?raw=true "How it looks")
+
 ## Installation
 
 ```bash
